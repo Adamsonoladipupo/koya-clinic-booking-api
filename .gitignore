@@ -18,3 +18,4 @@ dist/
 .idea/
 # OS
 .DS_Store
+backend/.venv/
