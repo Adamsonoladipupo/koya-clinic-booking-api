@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 
-
 app = FastAPI(
     title="Koya Clinic Booking API",
     description="Clinic appointment booking API for Koya Academy Cohort 4.",
