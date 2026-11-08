@@ -1,0 +1,36 @@
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+.app-header {
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.app-header h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  margin: 12px 0;
+}
+
+.app-header p {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.booking-section {
+  padding: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.booking-section h2 {
+  margin-top: 0;
+}
