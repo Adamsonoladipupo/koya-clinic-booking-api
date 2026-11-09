@@ -140,4 +140,19 @@ export const clinicApi = {
       { method: "DELETE" },
     );
   },
+
+
+    resetSlots(
+    apiKey: string,
+    slots: Array<
+        Pick<AppointmentSlot, "id" | "provider" | "start" | "end">
+    >,
+    ) {
+    return request<unknown>("/reset", apiKey, {
+        method: "POST",
+        body: JSON.stringify({ slots }),
+    });
+    },
+
 };
+

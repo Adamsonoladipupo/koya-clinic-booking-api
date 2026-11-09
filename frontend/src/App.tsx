@@ -12,7 +12,7 @@ import {
 
 import "./App.css";
 
-type View = "appointments" | "bookings";
+type View = "appointments" | "bookings" | "reset";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-NG", {
@@ -62,6 +62,147 @@ function EyeIcon({ visible }: { visible: boolean }) {
   );
 }
 
+
+
+
+
+
+
+type ResetSlot = Pick<
+  AppointmentSlot,
+  "id" | "provider" | "start" | "end"
+>;
+
+function getDefaultResetJson(): string {
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+
+  const date = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Lagos",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(tomorrow);
+
+  const sample = {
+    slots: [
+      {
+        id: "s1",
+        provider: "Dr. Ade",
+        start: `${date}T09:00:00+01:00`,
+        end: `${date}T09:30:00+01:00`,
+      },
+      {
+        id: "s2",
+        provider: "Dr. Adaeze Okafor",
+        start: `${date}T10:00:00+01:00`,
+        end: `${date}T10:30:00+01:00`,
+      },
+    ],
+  };
+
+  return JSON.stringify(sample, null, 2);
+}
+
+function parseResetSlots(input: string): ResetSlot[] {
+  const payload: unknown = JSON.parse(input);
+
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !("slots" in payload) ||
+    !Array.isArray(payload.slots)
+  ) {
+    throw new Error(
+      'The request body must contain a "slots" array.',
+    );
+  }
+
+  const slots: unknown[] = payload.slots;
+  const ids = new Set<string>();
+  const now = Date.now();
+
+  if (slots.length === 0) {
+    throw new Error("Provide at least one appointment slot.");
+  }
+
+  if (slots.length > 100) {
+    throw new Error(
+      "For this demo, submit at most 100 slots at a time.",
+    );
+  }
+
+  return slots.map((value, index) => {
+    if (typeof value !== "object" || value === null) {
+      throw new Error(`Slot ${index + 1} must be an object.`);
+    }
+
+    const slot = value as Record<string, unknown>;
+
+    for (const field of ["id", "provider", "start", "end"]) {
+      if (
+        typeof slot[field] !== "string" ||
+        !(slot[field] as string).trim()
+      ) {
+        throw new Error(
+          `Slot ${index + 1}: "${field}" must be a non-empty string.`,
+        );
+      }
+    }
+
+    const id = slot.id as string;
+    const provider = slot.provider as string;
+    const start = slot.start as string;
+    const end = slot.end as string;
+
+    if (id.length > 100 || provider.length > 255) {
+      throw new Error(
+        `Slot ${index + 1}: ID or provider name is too long.`,
+      );
+    }
+
+    if (ids.has(id)) {
+      throw new Error(`Duplicate slot ID: ${id}`);
+    }
+
+    ids.add(id);
+
+    const timezonePattern = /(Z|[+-]\d{2}:\d{2})$/i;
+
+    if (
+      !timezonePattern.test(start) ||
+      !timezonePattern.test(end) ||
+      !Number.isFinite(Date.parse(start)) ||
+      !Number.isFinite(Date.parse(end))
+    ) {
+      throw new Error(
+        `Slot ${index + 1}: provide valid ISO timestamps with timezone offsets.`,
+      );
+    }
+
+    if (Date.parse(start) <= now) {
+      throw new Error(
+        `Slot ${index + 1}: appointment must be in the future.`,
+      );
+    }
+
+    if (Date.parse(end) <= Date.parse(start)) {
+      throw new Error(
+        `Slot ${index + 1}: end must be after start.`,
+      );
+    }
+
+    return { id, provider, start, end };
+  });
+}
+
+
+
+
+
+
+
+
 function App() {
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
@@ -99,6 +240,18 @@ const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
 
 
 const [activeSearchEmail, setActiveSearchEmail] = useState("");
+
+
+
+
+const [resetJson, setResetJson] = useState(getDefaultResetJson);
+const [resetError, setResetError] = useState("");
+const [resetSuccess, setResetSuccess] = useState("");
+const [resetLoading, setResetLoading] = useState(false);
+const [showResetConfirmation, setShowResetConfirmation] =
+  useState(false);
+
+
   
 
   const loadSlots = useCallback(async (key: string) => {
@@ -198,6 +351,10 @@ const [activeSearchEmail, setActiveSearchEmail] = useState("");
     setBookingError("");
 
     setActiveSearchEmail("");
+
+    setResetError("");
+    setResetSuccess("");
+    setShowResetConfirmation(false);
 
   }
 
@@ -430,6 +587,82 @@ async function handleCancelBooking() {
 
   const providerCount = providers.length;
 
+
+  
+
+
+
+
+function handleResetPreview(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  setResetError("");
+  setResetSuccess("");
+
+  try {
+    parseResetSlots(resetJson);
+    setShowResetConfirmation(true);
+  } catch (error) {
+    setResetError(
+      error instanceof SyntaxError
+        ? "Invalid JSON. Check the formatting and try again."
+        : error instanceof Error
+          ? error.message
+          : "Invalid reset request.",
+    );
+  }
+}
+
+async function handleResetConfirm() {
+  if (!apiKey || resetLoading) return;
+
+  setResetLoading(true);
+  setResetError("");
+  setResetSuccess("");
+
+  try {
+    const parsedSlots = parseResetSlots(resetJson);
+
+    await clinicApi.resetSlots(apiKey, parsedSlots);
+
+    setShowResetConfirmation(false);
+    setResetSuccess(
+      `Reset successful. The database now contains ${parsedSlots.length} appointment slots.`,
+    );
+
+    // Clear data that may refer to deleted bookings or slots.
+    setBookings([]);
+    setBookingSlots({});
+    setNextCursor(null);
+    setHistorySearched(false);
+    setActiveSearchEmail("");
+    setSelectedSlot(null);
+    setConfirmedBooking(null);
+    setCancelTarget(null);
+    setProvider("all");
+    setAvailability("available");
+
+    await loadSlots(apiKey);
+  } catch (error) {
+    setShowResetConfirmation(false);
+    setResetError(
+      error instanceof Error
+        ? error.message
+        : "The reset request failed.",
+    );
+  } finally {
+    setResetLoading(false);
+  }
+}
+
+
+
+
+
+
+
+
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -463,6 +696,16 @@ async function handleCancelBooking() {
           >
             <span>▤</span> My Bookings
           </button>
+
+
+        <button
+          type="button"
+          className={`nav-link ${view === "reset" ? "active" : ""}`}
+          onClick={() => setView("reset")}
+        >
+          <span aria-hidden="true">↺</span> Reset Data
+        </button>
+
         </nav>
 
         <div className="sidebar-bottom">
@@ -485,7 +728,9 @@ async function handleCancelBooking() {
             Workspace <span>/</span>{" "}
             {view === "appointments"
               ? "Appointments"
-              : "My Bookings"}
+              : view === "bookings"
+              ? "My Bookings"
+              : "Reset Data"}
           </div>
 
           <div className="topbar-right">
@@ -517,12 +762,16 @@ async function handleCancelBooking() {
               <h1>
                 {view === "appointments"
                   ? "Find your next appointment"
-                  : "Manage your bookings"}
+                  : view === "bookings"
+                  ? "Manage your bookings"
+                  : "Reset appointment data"}
               </h1>
               <p>
                 {view === "appointments"
                   ? "Explore available appointments and find the right time for your care."
-                  : "View and manage your clinic appointments in one place."}
+                  : view === "bookings"
+                  ? "View and manage your clinic appointments in one place."
+                  : "Replace the demo appointment slots with your own test data."}
               </p>
             </div>
             <div className="welcome-decoration" aria-hidden="true">
@@ -787,26 +1036,13 @@ async function handleCancelBooking() {
                 )}
               </section>
             </>
-          ) : (
-            // <section className="appointments-panel">
-            //   <div className="panel-heading">
-            //     <div>
-            //       <h2>My bookings</h2>
-            //       <p>
-            //         Search your booking history using
-            //         your email address.
-            //       </p>
-            //     </div>
-            //   </div>
-            //   <div className="empty-state">
-            //     <div className="empty-icon">▤</div>
-            //     <h3>Booking management is coming next</h3>
-            //     <p>
-            //       We'll add booking history, confirmation,
-            //       and cancellation in the next phase.
-            //     </p>
-            //   </div>
-            // </section>
+          // ) : (
+
+
+
+          ) : view === "bookings" ? (
+
+            
 
 
 
@@ -963,7 +1199,123 @@ async function handleCancelBooking() {
 
 
 
-          )}
+
+
+
+
+) : (
+  <section className="appointments-panel reset-panel">
+    <div className="panel-heading">
+      <div>
+        <span className="eyebrow">DEMO DATA MANAGEMENT</span>
+        <h2>Reset appointment database</h2>
+        <p>
+          Replace the current appointments with a fresh set
+          of test slots.
+        </p>
+      </div>
+    </div>
+
+    <div className="reset-warning" role="note">
+      <span className="reset-warning-icon" aria-hidden="true">
+        ⚠
+      </span>
+      <div>
+        <strong>Important: This action deletes existing data.</strong>
+        <p>
+          Resetting removes all existing appointments, bookings,
+          booking attempts, and idempotency records. The new
+          appointment slots will be created using the JSON
+          provided below.
+        </p>
+      </div>
+    </div>
+
+    <form onSubmit={handleResetPreview}>
+      <div className="reset-editor-heading">
+        <div>
+          <label htmlFor="reset-json">
+            Appointment slots — JSON request body
+          </label>
+          <p>
+            Two example appointments are prefilled. You can
+            edit, add, or remove slots to create your own
+            test dataset.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() => {
+            setResetJson(getDefaultResetJson());
+            setResetError("");
+            setResetSuccess("");
+          }}
+          disabled={resetLoading}
+        >
+          Restore example
+        </button>
+      </div>
+
+      <textarea
+        id="reset-json"
+        className="reset-json-editor"
+        value={resetJson}
+        onChange={(event) => {
+          setResetJson(event.target.value);
+          setResetError("");
+          setResetSuccess("");
+        }}
+        spellCheck={false}
+        rows={19}
+        aria-describedby="reset-editor-help"
+      />
+
+      <p id="reset-editor-help" className="reset-editor-help">
+        Required structure: an object containing a "slots"
+        array. Each slot needs an id, provider, start, and end.
+        Use ISO 8601 timestamps with timezone offsets.
+      </p>
+
+      {resetError && (
+        <div className="error-message" role="alert">
+          {resetError}
+        </div>
+      )}
+
+      {resetSuccess && (
+        <div className="reset-success" role="status">
+          {resetSuccess}
+        </div>
+      )}
+
+      <div className="reset-footer">
+        <span>
+          <strong>Note:</strong> This operation cannot be undone.
+        </span>
+
+        <button
+          type="submit"
+          className="danger-button"
+          disabled={resetLoading}
+        >
+          Reset Database
+        </button>
+      </div>
+    </form>
+  </section>
+)}
+
+
+
+
+
+
+
+
+
+          {/* )}    ATTENTION !!!*/}
         </main>
       </div>
 
@@ -1192,6 +1544,74 @@ async function handleCancelBooking() {
     </section>
   </div>
 )}
+
+
+
+
+
+
+{showResetConfirmation && (
+  <div className="modal-backdrop">
+    <section
+      className="booking-modal"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="reset-confirm-title"
+      aria-describedby="reset-confirm-description"
+    >
+      <div className="modal-header">
+        <div>
+          <span className="eyebrow">CONFIRM DESTRUCTIVE ACTION</span>
+          <h2 id="reset-confirm-title">
+            Reset all clinic booking data?
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          className="modal-close"
+          aria-label="Close reset confirmation"
+          disabled={resetLoading}
+          onClick={() => setShowResetConfirmation(false)}
+        >
+          ×
+        </button>
+      </div>
+
+      <p
+        id="reset-confirm-description"
+        className="cancel-description"
+      >
+        This will permanently delete all existing appointment
+        slots and bookings, replacing them with the slots
+        in your JSON editor.
+      </p>
+
+      <div className="cancel-actions">
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={resetLoading}
+          onClick={() => setShowResetConfirmation(false)}
+        >
+          Go back
+        </button>
+
+        <button
+          type="button"
+          className="danger-button"
+          disabled={resetLoading}
+          onClick={() => void handleResetConfirm()}
+        >
+          {resetLoading
+            ? "Resetting..."
+            : "Yes, reset database"}
+        </button>
+      </div>
+    </section>
+  </div>
+)}
+
 
 
 
