@@ -10,8 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
-    title="Koya Clinic Booking API",
-    description="Clinic appointment booking API ",
+    title="Koya Clinic Booking API by Abdulwahab Adamson",
+    description="Clinic appointment booking API by Abdulwahab Adamson",
     version="1.0.0",
 )
 
