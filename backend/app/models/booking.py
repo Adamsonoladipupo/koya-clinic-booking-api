@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import (
@@ -11,6 +14,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+if TYPE_CHECKING:
+    from app.models.slot import AppointmentSlot
 
 
 class Booking(Base):
@@ -59,6 +65,6 @@ class Booking(Base):
         default=lambda: datetime.now().astimezone(),
     )
 
-    slot: Mapped["AppointmentSlot"] = relationship(
+    slot: Mapped[AppointmentSlot] = relationship(
         back_populates="bookings",
     )

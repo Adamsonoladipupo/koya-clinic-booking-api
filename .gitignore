@@ -17,5 +17,7 @@ dist/
 .vscode/
 .idea/
 # OS
-.DS_Store
+.DS_Store   
+.env
+backend/.env
 backend/.venv/
