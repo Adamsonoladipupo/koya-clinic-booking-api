@@ -6,15 +6,31 @@ from app.api.bookings import router as bookings_router
 from app.api.slots import router as slots_router
 from app.core.security import require_api_key
 
+# app = FastAPI(
+#     title="Koya Clinic Booking API",
+#     description="Clinic appointment booking API ",
+#     version="1.0.0",
+#     dependencies=[Depends(require_api_key)],
+# )
+#
+# app.include_router(slots_router)
+# app.include_router(bookings_router)
+
 app = FastAPI(
     title="Koya Clinic Booking API",
-    description="Clinic appointment booking API for Koya Academy Cohort 4.",
+    description="Clinic appointment booking API ",
     version="1.0.0",
+)
+
+app.include_router(
+    slots_router,
     dependencies=[Depends(require_api_key)],
 )
 
-app.include_router(slots_router)
-app.include_router(bookings_router)
+app.include_router(
+    bookings_router,
+    dependencies=[Depends(require_api_key)],
+)
 
 
 @app.exception_handler(HTTPException)
