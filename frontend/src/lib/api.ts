@@ -36,16 +36,46 @@ interface BookingsResponse {
   next_cursor: string | null;
 }
 
+// export class ApiError extends Error {
+//   constructor(
+//     public status: number,
+//     message: string,
+//     public retryAfter?: string | null,
+//   ) {
+//     super(message);
+//     this.name = "ApiError";
+//   }
+// }
+
+
+
+
 export class ApiError extends Error {
+  status: number;
+  retryAfter?: number;
+
   constructor(
-    public status: number,
+    status: number,
     message: string,
-    public retryAfter?: string | null,
+    retryAfter?: string | null,
   ) {
     super(message);
+
     this.name = "ApiError";
+    this.status = status;
+
+    if (retryAfter) {
+      const seconds = Number(retryAfter);
+
+      if (Number.isFinite(seconds) && seconds >= 0) {
+        this.retryAfter = seconds;
+      }
+    }
   }
 }
+
+
+
 
 async function request<T>(
   path: string,
