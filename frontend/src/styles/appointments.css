@@ -1,0 +1,369 @@
+/* ─────────────────────────────────────────────
+   appointments.css — slot grid, filters, booking modal
+   ───────────────────────────────────────────── */
+
+/* ── stats strip ─────────────────────────────── */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 16px;
+  padding: 23px 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card > span {
+  color: #7d8a9b;
+  font-size: 12px;
+}
+
+.stat-card strong {
+  color: #19394c;
+  font-size: 34px;
+  letter-spacing: -1px;
+  margin: 12px 0 6px;
+}
+
+.stat-card small {
+  color: #a1adba;
+  font-size: 11px;
+}
+
+/* ── panel shell (also used by bookings page) ── */
+
+.appointments-panel {
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 16px;
+  padding: 27px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.panel-heading h2 {
+  font-size: 19px;
+  color: #172b40;
+  margin: 0 0 8px;
+}
+
+.panel-heading p {
+  color: #8a97a7;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── filter bar ──────────────────────────────── */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 27px 0;
+  padding: 20px;
+  background: #f8fafc;
+  border: 1px solid #edf1f5;
+  border-radius: 11px;
+}
+
+.filter-field {
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-field select {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #dfe6ee;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+  font-size: 12px;
+  color: #3d5064;
+}
+
+/* ── slot grid ───────────────────────────────── */
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.slot-card {
+  border: 1px solid #e6ebf1;
+  border-radius: 13px;
+  padding: 20px;
+  transition: border-color .2s, transform .2s;
+}
+
+.slot-card:hover {
+  border-color: #9bd5c7;
+  transform: translateY(-2px);
+}
+
+.slot-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.slot-status {
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.is-available {
+  background: #e5f8ef;
+  color: #18845a;
+}
+
+.is-booked {
+  background: #fff1e7;
+  color: #bd7534;
+}
+
+.slot-card h3 {
+  margin: 0 0 5px;
+  color: #20394c;
+  font-size: 15px;
+}
+
+.slot-subtitle {
+  color: #9aa5b2;
+  font-size: 11px;
+  margin: 0;
+}
+
+.slot-divider {
+  height: 1px;
+  background: #edf0f4;
+  margin: 20px 0;
+}
+
+.slot-details {
+  display: grid;
+  gap: 13px;
+  color: #64788b;
+  font-size: 12px;
+}
+
+.slot-details div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.slot-details span {
+  color: #0b9583;
+  font-size: 17px;
+}
+
+.slot-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 22px;
+  border: 1px solid #bde2d8;
+  border-radius: 8px;
+  color: #087d70;
+  background: #eef9f5;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.slot-button:disabled {
+  cursor: not-allowed;
+  opacity: .7;
+}
+
+.slot-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.slot-button:not(:disabled):hover {
+  background: #d8f3e9;
+  border-color: #0a8778;
+}
+
+/* ── booking modal content ───────────────────── */
+
+.selected-appointment {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 18px;
+  background: #f0f9f6;
+  border: 1px solid #d8eee6;
+  border-radius: 12px;
+  margin: 25px 0;
+}
+
+.selected-appointment strong,
+.selected-appointment span {
+  display: block;
+}
+
+.selected-appointment strong {
+  font-size: 14px;
+  color: #214b45;
+}
+
+.selected-appointment span {
+  font-size: 12px;
+  color: #65867e;
+  margin-top: 6px;
+}
+
+.booking-form {
+  display: grid;
+  gap: 19px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #34475b;
+  margin-bottom: 9px;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #dce4ec;
+  border-radius: 9px;
+  outline: 0;
+  color: #172b40;
+  font-size: 13px;
+}
+
+.form-field input:focus {
+  border-color: #0c9382;
+  box-shadow: 0 0 0 3px #0c93821a;
+}
+
+.form-field input::placeholder {
+  color: #a6b0bd;
+}
+
+/* ── confirmation screen ─────────────────────── */
+
+.confirmation {
+  padding-top: 25px;
+  text-align: center;
+}
+
+.confirmation-icon {
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 15px;
+  background: #e2f7ed;
+  color: #0b9465;
+  border-radius: 50%;
+  font-size: 30px;
+}
+
+.confirmation h3 {
+  color: #1b3b36;
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.confirmation > p {
+  font-size: 13px;
+  color: #8290a0;
+  line-height: 1.7;
+}
+
+.appointment-summary {
+  text-align: left;
+  background: #f8fafc;
+  border: 1px solid #e8edf3;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.appointment-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8edf3;
+}
+
+.appointment-summary > div:last-child {
+  border-bottom: 0;
+}
+
+.appointment-summary span {
+  font-size: 12px;
+  color: #8290a0;
+}
+
+.appointment-summary strong {
+  font-size: 12px;
+  color: #34475b;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.appointment-summary .confirmed-text {
+  color: #0b9465;
+  text-transform: capitalize;
+}
+
+/* ── responsive ──────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .slots-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .appointments-panel {
+    padding: 22px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .slots-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-heading {
+    flex-direction: column;
+  }
+
+  .appointment-summary > div {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .appointment-summary strong {
+    text-align: left;
+  }
+}

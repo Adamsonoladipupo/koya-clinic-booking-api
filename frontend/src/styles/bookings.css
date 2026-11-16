@@ -1,0 +1,181 @@
+/* ─────────────────────────────────────────────
+   bookings.css — booking history list and cancel modal
+   ───────────────────────────────────────────── */
+
+/* ── search bar ──────────────────────────────── */
+
+.history-search {
+  display: flex;
+  align-items: end;
+  gap: 15px;
+  margin-top: 28px;
+  padding: 22px;
+  background: #f8fafc;
+  border: 1px solid #edf1f5;
+  border-radius: 12px;
+}
+
+.history-search .filter-field {
+  flex: 1;
+}
+
+.history-search input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #dce4ec;
+  border-radius: 9px;
+  outline: 0;
+  background: #fff;
+  color: #172b40;
+  font-size: 13px;
+}
+
+.history-search input:focus {
+  border-color: #0c9382;
+  box-shadow: 0 0 0 3px #0c93821a;
+}
+
+.history-search .primary-button {
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+/* ── bookings list ───────────────────────────── */
+
+.bookings-list {
+  margin-top: 25px;
+  display: grid;
+  gap: 15px;
+}
+
+.booking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px;
+  border: 1px solid #e6ebf1;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.booking-item-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  min-width: 0;
+}
+
+.booking-item-details {
+  min-width: 0;
+}
+
+.booking-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.booking-title-row h3 {
+  font-size: 15px;
+  color: #20394c;
+  margin: 0;
+}
+
+.booking-item-details p {
+  color: #718297;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 0;
+  overflow-wrap: anywhere;
+}
+
+.booking-reference {
+  display: block;
+  color: #9ba7b4;
+  font-size: 11px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+/* ── booking status badge ────────────────────── */
+
+.booking-status {
+  display: inline-flex;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.booking-confirmed {
+  color: #12845d;
+  background: #e5f8ef;
+}
+
+.booking-cancelled {
+  color: #b45a45;
+  background: #fff0eb;
+}
+
+/* ── cancel button on card ───────────────────── */
+
+.cancel-button {
+  border: 1px solid #f2c8c1;
+  background: #fff7f5;
+  color: #b94c3d;
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cancel-button:hover {
+  background: #ffeae5;
+}
+
+.cancel-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ── pagination ──────────────────────────────── */
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.history-loading {
+  color: #8b98a8;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ── responsive ──────────────────────────────── */
+
+@media (max-width: 620px) {
+  .history-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .history-search .filter-field {
+    width: 100%;
+  }
+
+  .booking-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cancel-button {
+    align-self: flex-start;
+  }
+}
