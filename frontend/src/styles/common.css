@@ -1,0 +1,222 @@
+/* ─────────────────────────────────────────────
+   common.css — shared tokens and global utilities
+   ───────────────────────────────────────────── */
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f7f9fc;
+}
+
+/* ── typography ──────────────────────────────── */
+
+.eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #0b9583;
+}
+
+/* ── shared avatar ───────────────────────────── */
+
+.doctor-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 12px;
+  background: #e8f6f1;
+  color: #087d70;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+/* ── feedback states ─────────────────────────── */
+
+.error-message {
+  background: #fff0ef;
+  border: 1px solid #ffd5d0;
+  color: #b43b31;
+  padding: 13px 15px;
+  border-radius: 9px;
+  margin-top: 15px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.empty-state {
+  padding: 70px 20px;
+  text-align: center;
+  color: #8b98a8;
+  font-size: 13px;
+}
+
+.empty-icon {
+  font-size: 37px;
+  color: #b0c6c2;
+  margin-bottom: 13px;
+}
+
+.empty-state h3 {
+  color: #34495b;
+  font-size: 17px;
+}
+
+.empty-state p {
+  line-height: 1.7;
+}
+
+/* ── buttons ─────────────────────────────────── */
+
+.primary-button {
+  background: #0a8778;
+  border: 0;
+  color: #fff;
+  border-radius: 10px;
+  padding: 15px 19px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  transition: background .2s;
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #086c60;
+}
+
+.primary-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.secondary-button {
+  background: #fff;
+  border: 1px solid #dce5ed;
+  border-radius: 9px;
+  padding: 11px 15px;
+  color: #3e5768;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.secondary-button:hover {
+  border-color: #0a8778;
+}
+
+.danger-button {
+  background: #d45143;
+  color: #fff;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.danger-button:hover {
+  background: #b93d31;
+}
+
+.danger-button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ── modal shared shell ──────────────────────── */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 35, 49, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.booking-modal {
+  width: min(100%, 490px);
+  max-height: min(90vh, 850px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 25px 80px rgba(15, 35, 49, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  letter-spacing: -0.7px;
+  color: #172b40;
+  margin: 9px 0 0;
+}
+
+.modal-close {
+  border: 0;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 9px;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ── cancel / confirm dialog shared layout ───── */
+
+.cancel-description {
+  color: #718297;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 22px 0 28px;
+}
+
+.cancel-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ── responsive: stack modal summary rows ────── */
+
+@media (max-width: 620px) {
+  .app-shell {
+    display: block;
+  }
+
+  .booking-modal {
+    padding: 22px;
+  }
+
+  .cancel-actions {
+    flex-direction: column;
+  }
+
+  .cancel-actions button {
+    width: 100%;
+  }
+}

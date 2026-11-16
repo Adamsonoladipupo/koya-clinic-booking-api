@@ -36,19 +36,6 @@ interface BookingsResponse {
   next_cursor: string | null;
 }
 
-// export class ApiError extends Error {
-//   constructor(
-//     public status: number,
-//     message: string,
-//     public retryAfter?: string | null,
-//   ) {
-//     super(message);
-//     this.name = "ApiError";
-//   }
-// }
-
-
-
 
 export class ApiError extends Error {
   status: number;
